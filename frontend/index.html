@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ClinicalRAG Agent</title>
+<link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="app-header">
+      <div class="brand">
+        <span class="brand-dot"></span>
+        <h1>ClinicalRAG Agent</h1>
+      </div>
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="query">Ask a Question</button>
+        <button class="tab-btn" data-tab="coding">ICD-10 Coding</button>
+        <button class="tab-btn" data-tab="ingest">Knowledge Base</button>
+      </div>
+    </header>
+
+    <main class="app-main">
+      <section id="tab-query" class="tab-panel active">
+        <form id="query-form" class="query-form">
+          <textarea id="query-input" placeholder="e.g. What is first-line pharmacologic therapy for stage 2 hypertension?" rows="3"></textarea>
+          <div class="form-row">
+            <label class="stream-toggle">
+              <input type="checkbox" id="stream-toggle" />
+              Stream response
+            </label>
+            <button type="submit" id="query-submit">Ask</button>
+          </div>
+        </form>
+
+        <div id="query-status" class="status hidden"></div>
+
+        <div id="query-result" class="result hidden">
+          <div class="pipeline-trace" id="pipeline-trace"></div>
+
+          <div class="answer-card">
+            <h2>Answer</h2>
+            <p id="answer-text"></p>
+          </div>
+
+          <div class="citations-card">
+            <h2>Citations</h2>
+            <ul id="citations-list"></ul>
+          </div>
+
+          <div class="qa-card" id="qa-card">
+            <h2>QA / Verification</h2>
+            <p id="qa-text"></p>
+          </div>
+
+          <details class="findings-card">
+            <summary>Key findings (reasoning agent)</summary>
+            <ul id="findings-list"></ul>
+          </details>
+        </div>
+      </section>
+
+      <section id="tab-coding" class="tab-panel">
+        <form id="coding-form" class="query-form">
+          <textarea id="coding-input" placeholder="e.g. Patient with elevated fasting glucose and polyuria, suspect type 2 diabetes" rows="3"></textarea>
+          <div class="form-row">
+            <button type="submit" id="coding-submit">Suggest ICD-10 Codes</button>
+          </div>
+        </form>
+        <div id="coding-status" class="status hidden"></div>
+        <div id="coding-result" class="result hidden">
+          <div class="answer-card">
+            <h2>Suggested Codes</h2>
+            <table class="codes-table">
+              <thead><tr><th>Code</th><th>Description</th><th>Confidence</th></tr></thead>
+              <tbody id="codes-tbody"></tbody>
+            </table>
+          </div>
+          <div class="qa-card">
+            <h2>Rationale</h2>
+            <p id="coding-rationale"></p>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-ingest" class="tab-panel">
+        <div class="answer-card">
+          <h2>Knowledge Base Ingestion</h2>
+          <p class="muted">Loads the sample clinical guideline documents (hypertension, type 2 diabetes, community-acquired pneumonia) into the vector store and keyword index.</p>
+          <div class="form-row">
+            <label><input type="checkbox" id="reset-toggle" /> Reset indexes first</label>
+            <button id="ingest-btn">Ingest Sample Docs</button>
+          </div>
+          <div id="ingest-status" class="status hidden"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="app-footer">
+      <span>Multi-agent RAG · LangGraph + CrewAI · Hybrid Search (Elasticsearch + Vector) · Gemini</span>
+    </footer>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
