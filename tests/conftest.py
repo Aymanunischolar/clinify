@@ -12,6 +12,12 @@ os.environ.setdefault("USE_LOCAL_DRUG_CHECK", "1")
 os.environ.setdefault("USE_FALLBACK_CODING_CREW", "1")
 os.environ.setdefault("VECTOR_STORE_DIR", "data/test_vector_store")
 
+# Tests must be deterministic and must not depend on a live LLM quota, so
+# they always run against the mock LLM provider regardless of whether a
+# real GEMINI_API_KEY is set (directly, or via api.main's load_dotenv()
+# picking up .env at import time).
+os.environ["FORCE_MOCK_LLM"] = "1"
+
 import pytest
 
 

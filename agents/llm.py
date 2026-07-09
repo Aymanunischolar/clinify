@@ -89,7 +89,7 @@ class LLMClient:
         self.model = model
         self.models_to_try = [model] + [m for m in FALLBACK_MODELS if m != model]
         self.api_key = os.getenv("GEMINI_API_KEY")
-        self.mock = not self.api_key
+        self.mock = not self.api_key or os.getenv("FORCE_MOCK_LLM") == "1"
         self._genai_client = None
 
     def _client(self):
