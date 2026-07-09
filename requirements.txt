@@ -1,17 +1,20 @@
+# Slim dependency set — this is what Vercel's Python builder installs (it
+# only reads a manifest at the project root). Deliberately excludes
+# torch/sentence-transformers/chromadb/elasticsearch/crewai — they're too
+# large for Vercel's function size limit, and every place that uses them
+# in this codebase already lazy-imports with a graceful fallback (hashing
+# embedder, in-process BM25, in-memory vector store, direct-LLM coding
+# crew). See README's "Runs without any API key" section and
+# retrieval/*.py / crew/coding_crew.py for the fallback logic.
+#
+# For local development / Docker with the full-fidelity stack (real
+# embeddings, cross-encoder reranker, Elasticsearch, CrewAI), install
+# requirements-full.txt instead.
 fastapi>=0.115,<0.116
 uvicorn[standard]>=0.30,<0.31
 pydantic>=2.9,<3.0
 python-dotenv>=1.0,<2.0
-
 langgraph>=0.2.34,<0.3
-crewai>=0.80,<0.90
-
 google-genai>=0.7,<0.8
-
-chromadb>=0.5.15
-sentence-transformers>=3.1,<4.0
-elasticsearch>=8.15,<9.0
 rank_bm25>=0.2.2,<0.3
-
-pytest>=8.3,<9.0
 httpx>=0.27,<0.28

@@ -71,12 +71,17 @@ the mock template.
 
 ## Quickstart (local, no Docker)
 
+There are two requirements files: `requirements.txt` (slim — no torch/chromadb/
+elasticsearch/crewai, used by the Vercel deployment) and `requirements-full.txt`
+(full-fidelity local stack: real sentence-transformers embeddings, cross-encoder
+reranker, Elasticsearch client, CrewAI). Use the full one for local development.
+
 ```bash
 python -m venv .venv
 .venv\Scripts\activate        # Windows
 # source .venv/bin/activate   # macOS/Linux
 
-pip install -r requirements.txt
+pip install -r requirements-full.txt
 cp .env.example .env          # fill in GEMINI_API_KEY for real generation
 
 uvicorn api.main:app --reload
@@ -100,6 +105,35 @@ docker compose -f docker/docker-compose.yml up --build
 
 Runs the API against a real Elasticsearch container. `POST /ingest` (or the UI) to
 populate the knowledge base.
+
+## Deployment (Vercel)
+
+The frontend and API deploy together as a single Vercel project (`vercel.json` routes
+every path to the `api/index.py` ASGI function, which just imports the same FastAPI
+`app` used locally).
+
+Vercel's serverless functions are stateless (nothing persists across cold starts) and
+size-capped, so this deployment mode intentionally trades fidelity for portability:
+
+- Uses `requirements.txt` (the slim manifest at the project root — Vercel's Python
+  builder only reads a root-level manifest) instead of `requirements-full.txt`.
+- No torch/sentence-transformers/chromadb/elasticsearch/crewai — every place that uses
+  them already lazy-imports with a fallback (hashing embedder, in-process BM25,
+  in-memory vector store, direct-Gemini coding crew instead of the CrewAI framework).
+- `/query`, `/query/stream`, and `/coding` call `ensure_ingested()` to re-populate the
+  in-memory store from `data/sample_docs` on first request after a cold start, since
+  nothing survives between invocations (`/tmp` is the only writable path).
+
+```bash
+npm i -g vercel
+vercel link
+vercel env add GEMINI_API_KEY production   # paste your key
+vercel --prod
+```
+
+For the full-fidelity experience (real embeddings, cross-encoder reranking, a real
+Elasticsearch cluster, the actual CrewAI framework), use Docker or a host that supports
+long-running processes and persistent disk (Render, Railway, Fly.io, a VM) instead.
 
 ## API
 
