@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "clinicalrag-api",
+      "runtimeExecutable": ".venv/Scripts/uvicorn.exe",
+      "runtimeArgs": ["api.main:app", "--host", "0.0.0.0", "--port", "8010"],
+      "port": 8010
+    }
+  ]
+}

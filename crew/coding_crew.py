@@ -62,6 +62,7 @@ def _coding_agent_task(user_input: str, chunks: list[RetrievedChunk], candidates
         f"Retrieved guideline context:\n{context}"
     )
     raw = llm.structured_completion(
+        role="coding",
         system_prompt=CODING_SYSTEM_PROMPT_V1,
         user_prompt=user_prompt,
         schema_hint=CODING_SCHEMA_HINT,
@@ -91,6 +92,7 @@ def _verification_agent_task(
         f"Retrieved context:\n{context}"
     )
     raw = llm.structured_completion(
+        role="coding",
         system_prompt=VERIFIER_SYSTEM_PROMPT,
         user_prompt=user_prompt,
         schema_hint=VERIFIER_SCHEMA_HINT,

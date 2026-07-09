@@ -9,69 +9,60 @@ without any API key — useful for demos, tests, and CI.
 from __future__ import annotations
 
 import json
+import logging
 import os
 from typing import Any
+
+logger = logging.getLogger("clinicalrag.llm")
 
 DEFAULT_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash-lite")
 FALLBACK_MODELS = [
     m.strip() for m in os.getenv("GEMINI_FALLBACK_MODELS", "").split(",") if m.strip()
 ]
 
+_MOCK_RESPONSES = {
+    "planner": lambda user_prompt: {
+        "sub_questions": [user_prompt.strip()[:200]],
+        "search_queries": [user_prompt.strip()[:200]],
+        "requires_coding": any(
+            kw in user_prompt.lower() for kw in ["diagnos", "code", "icd", "bill"]
+        ),
+    },
+    "reasoner": lambda user_prompt: {
+        "key_findings": [
+            "Mock mode: no GEMINI_API_KEY configured, so this is a "
+            "template reasoning summary generated from retrieved context "
+            "rather than an LLM. Set GEMINI_API_KEY for real reasoning."
+        ],
+        "supporting_chunk_ids": [],
+    },
+    "writer": lambda user_prompt: {
+        "answer": (
+            "[MOCK MODE — no GEMINI_API_KEY set] Based on the retrieved "
+            "clinical guideline excerpts below, here is a template "
+            "response. Configure GEMINI_API_KEY to get a real generated "
+            "answer grounded in the retrieved context."
+        ),
+        "citations": [],
+    },
+    "qa": lambda user_prompt: {
+        "is_grounded": True,
+        "faithfulness_notes": "Mock mode: verification skipped, assumed grounded.",
+        "revised_answer": None,
+    },
+    "coding": lambda user_prompt: {"suggested_codes": [], "rationale": "Mock mode: no LLM configured."},
+}
 
-class LLMError(RuntimeError):
-    pass
 
-
-def _mock_structured_response(system_prompt: str, user_prompt: str, schema_hint: str) -> dict[str, Any]:
-    """Best-effort deterministic mock for offline/demo mode.
-
-    Inspects which agent role is calling (via the system prompt) and
-    returns a plausible structured payload so downstream nodes still get
-    well-formed JSON to work with.
-    """
-    role = system_prompt.lower()
-
-    if "planner" in role:
-        return {
-            "sub_questions": [user_prompt.strip()[:200]],
-            "search_queries": [user_prompt.strip()[:200]],
-            "requires_coding": any(
-                kw in user_prompt.lower() for kw in ["diagnos", "code", "icd", "bill"]
-            ),
-        }
-
-    if "reason" in role:
-        return {
-            "key_findings": [
-                "Mock mode: no GEMINI_API_KEY configured, so this is a "
-                "template reasoning summary generated from retrieved context "
-                "rather than an LLM. Set GEMINI_API_KEY for real reasoning."
-            ],
-            "supporting_chunk_ids": [],
-        }
-
-    if "writer" in role:
-        return {
-            "answer": (
-                "[MOCK MODE — no GEMINI_API_KEY set] Based on the retrieved "
-                "clinical guideline excerpts below, here is a template "
-                "response. Configure GEMINI_API_KEY to get a real generated "
-                "answer grounded in the retrieved context."
-            ),
-            "citations": [],
-        }
-
-    if "qa" in role or "verif" in role:
-        return {
-            "is_grounded": True,
-            "faithfulness_notes": "Mock mode: verification skipped, assumed grounded.",
-            "revised_answer": None,
-        }
-
-    if "coding" in role or "icd" in role:
-        return {"suggested_codes": [], "rationale": "Mock mode: no LLM configured."}
-
-    return {"raw": "Mock response — no GEMINI_API_KEY configured."}
+def _mock_structured_response(role: str, user_prompt: str) -> dict[str, Any]:
+    """Deterministic mock for offline/demo mode, keyed by an explicit agent
+    role (not sniffed from prompt text, which is fragile — e.g. the Writer
+    prompt mentions "reasoning summary" and would false-match a "reasoner"
+    substring check)."""
+    builder = _MOCK_RESPONSES.get(role)
+    if builder is None:
+        return {"raw": "Mock response — no GEMINI_API_KEY configured."}
+    return builder(user_prompt)
 
 
 def _extract_json(text: str) -> dict[str, Any]:
@@ -101,14 +92,19 @@ class LLMClient:
 
     def structured_completion(
         self,
+        role: str,
         system_prompt: str,
         user_prompt: str,
         schema_hint: str = "Return valid JSON.",
         temperature: float = 0.2,
     ) -> dict[str, Any]:
-        """Returns a parsed JSON dict from the LLM (or the mock provider)."""
+        """Returns a parsed JSON dict from the LLM (or the mock provider).
+
+        `role` identifies the calling agent (e.g. "planner", "writer") and
+        is used only for the offline mock provider's response shape.
+        """
         if self.mock:
-            return _mock_structured_response(system_prompt, user_prompt, schema_hint)
+            return _mock_structured_response(role, user_prompt)
 
         from google.genai import types
 
@@ -129,14 +125,23 @@ class LLMClient:
             except Exception as e:  # noqa: BLE001 - try next model in the fallback chain
                 last_error = e
                 continue
-        raise LLMError(f"All Gemini models failed ({self.models_to_try}): {last_error}") from last_error
+
+        # All configured Gemini models failed (e.g. provider outage or quota
+        # exhaustion). Degrade to the mock provider rather than 500ing the
+        # whole request — a rate-limited LLM shouldn't take down retrieval,
+        # citations, or the rest of the pipeline.
+        logger.warning(
+            "All Gemini models failed (%s): %s — degrading to mock response",
+            self.models_to_try,
+            last_error,
+        )
+        return _mock_structured_response(role, user_prompt)
 
     def stream_completion(self, system_prompt: str, user_prompt: str, temperature: float = 0.3):
-        """Yields text chunks. In mock mode, yields the mock answer in pieces."""
+        """Yields text chunks of a Writer-style prose answer. In mock mode,
+        yields the mock Writer answer in pieces."""
         if self.mock:
-            text = _mock_structured_response(system_prompt, user_prompt, "")["answer"] \
-                if "writer" in system_prompt.lower() else \
-                "[MOCK MODE — no GEMINI_API_KEY set] " + user_prompt[:200]
+            text = _mock_structured_response("writer", user_prompt)["answer"]
             for i in range(0, len(text), 24):
                 yield text[i : i + 24]
             return
@@ -162,7 +167,15 @@ class LLMClient:
             except Exception as e:  # noqa: BLE001 - try next model in the fallback chain
                 last_error = e
                 continue
-        raise LLMError(f"All Gemini models failed ({self.models_to_try}): {last_error}") from last_error
+
+        logger.warning(
+            "All Gemini models failed (%s): %s — degrading to mock stream",
+            self.models_to_try,
+            last_error,
+        )
+        text = "[MOCK MODE — Gemini unavailable] " + user_prompt[:200]
+        for i in range(0, len(text), 24):
+            yield text[i : i + 24]
 
 
 _client: LLMClient | None = None

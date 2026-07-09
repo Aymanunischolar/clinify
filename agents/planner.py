@@ -9,6 +9,7 @@ from agents.schemas import PlannerOutput
 def run(user_input: str) -> PlannerOutput:
     llm = get_llm_client()
     raw = llm.structured_completion(
+        role="planner",
         system_prompt=PLANNER_SYSTEM_PROMPT_V1,
         user_prompt=user_input,
         schema_hint=PLANNER_SCHEMA_HINT,

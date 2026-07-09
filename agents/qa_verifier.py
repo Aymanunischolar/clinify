@@ -26,6 +26,7 @@ def run(user_question: str, writer_output: WriterOutput, chunks: list[RetrievedC
         f"Source excerpts:\n{context}"
     )
     raw = llm.structured_completion(
+        role="qa",
         system_prompt=QA_SYSTEM_PROMPT_V1,
         user_prompt=user_prompt,
         schema_hint=QA_SCHEMA_HINT,

@@ -19,6 +19,7 @@ def run(user_question: str, chunks: list[RetrievedChunk]) -> ReasonerOutput:
     context = _format_context(chunks)
     user_prompt = f"Question:\n{user_question}\n\nRetrieved context:\n{context}"
     raw = llm.structured_completion(
+        role="reasoner",
         system_prompt=REASONER_SYSTEM_PROMPT_V1,
         user_prompt=user_prompt,
         schema_hint=REASONER_SCHEMA_HINT,

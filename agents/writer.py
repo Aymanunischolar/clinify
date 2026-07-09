@@ -24,6 +24,7 @@ def run(user_question: str, key_findings: list[str], chunks: list[RetrievedChunk
         f"Retrieved context (use for citations):\n{context}"
     )
     raw = llm.structured_completion(
+        role="writer",
         system_prompt=WRITER_SYSTEM_PROMPT_V1,
         user_prompt=user_prompt,
         schema_hint=WRITER_SCHEMA_HINT,

@@ -30,7 +30,10 @@ class ElasticsearchKeywordIndex:
     def __init__(self, url: str = ES_URL, index: str = ES_INDEX):
         from elasticsearch import Elasticsearch
 
-        self.es = Elasticsearch(url)
+        # Fail fast (~1-2s) when no ES cluster is reachable so callers fall
+        # back to LocalBM25Index quickly instead of paying the client's
+        # default multi-attempt exponential backoff (~15s+).
+        self.es = Elasticsearch(url, request_timeout=2, max_retries=1, retry_on_timeout=False)
         self.index = index
         if not self.es.indices.exists(index=self.index):
             self.es.indices.create(index=self.index, body=INDEX_MAPPING)
