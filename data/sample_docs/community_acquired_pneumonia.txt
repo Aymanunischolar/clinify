@@ -1,0 +1,54 @@
+Community-Acquired Pneumonia Management Guideline (Sample, Public Domain Style)
+
+Diagnosis
+
+Community-acquired pneumonia (CAP) should be suspected in patients presenting with
+cough, fever, dyspnea, pleuritic chest pain, and new infiltrate on chest imaging.
+Diagnosis is confirmed by the combination of clinical findings and a new pulmonary
+opacity on chest radiograph or CT that is not otherwise explained.
+
+Severity Assessment
+
+Severity assessment tools such as CURB-65 or the Pneumonia Severity Index (PSI) should
+be used to guide site-of-care decisions. CURB-65 assigns one point each for confusion,
+blood urea nitrogen greater than 19 mg/dL, respiratory rate 30 breaths per minute or
+greater, systolic blood pressure below 90 mmHg or diastolic below 60 mmHg, and age 65 or
+older. A CURB-65 score of 0-1 suggests outpatient management is reasonable, a score of 2
+suggests consideration of a short inpatient stay or closely supervised outpatient
+treatment, and a score of 3 or higher suggests hospitalization, with a score of 4-5
+suggesting consideration of ICU-level care.
+
+Outpatient Empiric Therapy
+
+For previously healthy outpatients without comorbidities or recent antibiotic use,
+amoxicillin is the preferred empiric agent. Alternatives include doxycycline or, in
+areas with low pneumococcal macrolide resistance, a macrolide such as azithromycin. For
+outpatients with comorbidities (chronic heart, lung, liver, or renal disease; diabetes;
+alcohol use disorder; malignancy; or asplenia), combination therapy with amoxicillin-
+clavulanate plus a macrolide or doxycycline, or monotherapy with a respiratory
+fluoroquinolone, is recommended.
+
+Inpatient Empiric Therapy
+
+For non-ICU inpatients, recommended regimens include a beta-lactam (such as ampicillin-
+sulbactam, cefotaxime, ceftriaxone, or ceftaroline) combined with a macrolide, or
+monotherapy with a respiratory fluoroquinolone. For ICU patients, a beta-lactam
+combined with either a macrolide or a respiratory fluoroquinolone is recommended. If
+risk factors for Pseudomonas aeruginosa are present, an antipseudomonal beta-lactam
+should be used. If risk factors for MRSA are present, vancomycin or linezolid should be
+added, with de-escalation guided by culture results.
+
+Duration of Therapy
+
+Antibiotic therapy duration for CAP is generally guided by clinical stability rather
+than a fixed number of days. A minimum of five days of therapy is recommended, and
+therapy should not be discontinued until the patient is afebrile and clinically stable
+for 48-72 hours.
+
+Adjunctive Measures
+
+Corticosteroids are not routinely recommended for CAP outside of the setting of
+refractory septic shock. Procalcitonin measurement may assist in decisions about
+antibiotic initiation and duration but should not override clinical judgment. All
+hospitalized patients should be assessed for venous thromboembolism prophylaxis and
+early mobilization.

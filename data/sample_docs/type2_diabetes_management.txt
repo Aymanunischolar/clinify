@@ -1,0 +1,59 @@
+Type 2 Diabetes Mellitus Management Guideline (Sample, Public Domain Style)
+
+Diagnosis
+
+Type 2 diabetes mellitus is diagnosed by a fasting plasma glucose of 126 mg/dL or
+higher, a 2-hour plasma glucose of 200 mg/dL or higher during a 75g oral glucose
+tolerance test, a hemoglobin A1c of 6.5% or higher, or a random plasma glucose of 200
+mg/dL or higher in a patient with classic symptoms of hyperglycemia. In the absence of
+unequivocal hyperglycemia, results should be confirmed with repeat testing.
+
+Glycemic Targets
+
+A reasonable A1c target for most non-pregnant adults is less than 7%. Less stringent
+targets (such as less than 8%) may be appropriate for patients with limited life
+expectancy, extensive comorbid illness, or a history of severe hypoglycemia. More
+stringent targets (such as less than 6.5%) may be considered for selected patients if
+achievable without significant hypoglycemia.
+
+First-Line Pharmacotherapy
+
+Metformin remains the preferred initial pharmacologic agent for most patients with type
+2 diabetes, given its efficacy, low hypoglycemia risk, favorable cost, and possible
+cardiovascular benefit. Metformin should be used with caution or avoided in patients
+with an estimated glomerular filtration rate (eGFR) below 30 mL/min/1.73m2 due to risk
+of lactic acidosis.
+
+Second-Line Therapy and Cardiovascular/Renal Risk
+
+In patients with established atherosclerotic cardiovascular disease, heart failure, or
+chronic kidney disease, a GLP-1 receptor agonist or SGLT2 inhibitor with demonstrated
+cardiovascular or renal benefit should be added independent of A1c control, given
+evidence of reduced major adverse cardiovascular events, heart failure hospitalization,
+and progression of kidney disease. SGLT2 inhibitors carry a risk of euglycemic diabetic
+ketoacidosis and genital mycotic infections and should be used cautiously in patients at
+risk of volume depletion.
+
+Insulin Therapy
+
+Insulin should be considered at any stage of type 2 diabetes when glycemic targets are
+not met, particularly in the setting of significant hyperglycemia (A1c above 10% or
+blood glucose persistently above 300 mg/dL), catabolic features, or acute illness.
+Basal insulin is typically the preferred starting regimen, titrated based on fasting
+glucose readings.
+
+Monitoring and Complication Screening
+
+A1c should be checked at least twice yearly in patients meeting treatment goals and
+quarterly in patients not at goal or with recent therapy changes. Annual screening
+should include a dilated eye exam, foot examination with monofilament testing, urine
+albumin-to-creatinine ratio, and lipid panel. Blood pressure should be checked at every
+visit, with a target generally below 130/80 mmHg in most patients with diabetes.
+
+Hypoglycemia Management
+
+Mild to moderate hypoglycemia (blood glucose below 70 mg/dL) in a conscious patient
+should be treated with 15-20 grams of fast-acting carbohydrate, followed by rechecking
+glucose in 15 minutes. Severe hypoglycemia with altered consciousness should be treated
+with intramuscular or intranasal glucagon, or intravenous dextrose if in a monitored
+setting.
