@@ -1,0 +1,38 @@
+[
+  {
+    "id": "htn-1",
+    "query": "What is first-line pharmacologic therapy for stage 2 hypertension?",
+    "expected_answer_contains": ["thiazide", "calcium channel blocker", "ACE inhibitor"],
+    "expected_sources": ["hypertension_management.txt"]
+  },
+  {
+    "id": "htn-2",
+    "query": "What blood pressure medications are contraindicated in pregnancy?",
+    "expected_answer_contains": ["ACE inhibitor", "ARB", "contraindicated"],
+    "expected_sources": ["hypertension_management.txt"]
+  },
+  {
+    "id": "t2dm-1",
+    "query": "What is the first-line pharmacologic agent for type 2 diabetes?",
+    "expected_answer_contains": ["metformin"],
+    "expected_sources": ["type2_diabetes_management.txt"]
+  },
+  {
+    "id": "t2dm-2",
+    "query": "How should mild hypoglycemia be treated in a conscious patient?",
+    "expected_answer_contains": ["15-20 grams", "fast-acting carbohydrate"],
+    "expected_sources": ["type2_diabetes_management.txt"]
+  },
+  {
+    "id": "cap-1",
+    "query": "What antibiotic is recommended for a previously healthy outpatient with community-acquired pneumonia?",
+    "expected_answer_contains": ["amoxicillin"],
+    "expected_sources": ["community_acquired_pneumonia.txt"]
+  },
+  {
+    "id": "cap-2",
+    "query": "What score is used to decide whether a pneumonia patient needs hospitalization?",
+    "expected_answer_contains": ["CURB-65"],
+    "expected_sources": ["community_acquired_pneumonia.txt"]
+  }
+]
