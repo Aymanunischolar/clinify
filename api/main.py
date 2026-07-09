@@ -99,7 +99,9 @@ async def ingest(req: IngestRequest):
 @app.post("/query")
 async def query(req: QueryRequest):
     from graph.build_graph import run_pipeline
+    from retrieval.hybrid_search import ensure_ingested
 
+    ensure_ingested()
     result = run_pipeline(req.query)
     return {
         "answer": result.get("final_answer", ""),
@@ -127,8 +129,10 @@ async def query_stream(req: QueryRequest):
     from agents.llm import get_llm_client
     from agents.prompts import WRITER_SYSTEM_PROMPT_V1
     from agents.writer import _format_context
+    from retrieval.hybrid_search import ensure_ingested
 
     async def event_generator():
+        ensure_ingested()
         plan = planner.run(req.query)
         yield f"event: plan\ndata: {json.dumps(plan.model_dump())}\n\n"
 
@@ -157,7 +161,9 @@ async def query_stream(req: QueryRequest):
 @app.post("/coding")
 async def coding(req: CodingRequest):
     from crew.coding_crew import run_coding_crew
+    from retrieval.hybrid_search import ensure_ingested
 
+    ensure_ingested()
     result = run_coding_crew(req.query)
     return result.model_dump()
 

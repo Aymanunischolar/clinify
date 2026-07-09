@@ -8,6 +8,7 @@ from __future__ import annotations
 import os
 from dataclasses import dataclass
 from functools import lru_cache
+from pathlib import Path
 
 from retrieval.chunking import Chunk, load_and_chunk_directory
 from retrieval.elasticsearch_client import get_keyword_index
@@ -15,6 +16,8 @@ from retrieval.vector_store import get_vector_store
 
 VECTOR_WEIGHT = float(os.getenv("HYBRID_VECTOR_WEIGHT", "0.6"))
 KEYWORD_WEIGHT = float(os.getenv("HYBRID_KEYWORD_WEIGHT", "0.4"))
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 
 @dataclass
@@ -39,9 +42,12 @@ def _normalize(results: list[dict]) -> dict[str, float]:
 
 
 def ingest_directory(directory: str = "data/sample_docs", chunk_size: int = 800, overlap: int = 120) -> int:
-    from pathlib import Path
-
-    chunks = load_and_chunk_directory(Path(directory), chunk_size=chunk_size, overlap=overlap)
+    path = Path(directory)
+    if not path.is_absolute():
+        # Resolve relative to the project root rather than the process's
+        # CWD, which serverless runtimes (e.g. Vercel) don't guarantee.
+        path = PROJECT_ROOT / path
+    chunks = load_and_chunk_directory(path, chunk_size=chunk_size, overlap=overlap)
     if not chunks:
         return 0
     vector_store = get_vector_store()
@@ -54,6 +60,17 @@ def ingest_directory(directory: str = "data/sample_docs", chunk_size: int = 800,
 def reset_indexes():
     get_vector_store().reset()
     get_keyword_index().reset()
+
+
+def ensure_ingested(directory: str = "data/sample_docs") -> None:
+    """Ingests the sample docs if the vector store is currently empty.
+
+    On serverless deployments (e.g. Vercel) nothing persists across cold
+    starts, so callers that need the knowledge base populated should call
+    this instead of assuming a prior /ingest call already ran.
+    """
+    if get_vector_store().count() == 0:
+        ingest_directory(directory)
 
 
 @lru_cache(maxsize=1)

@@ -1,0 +1,19 @@
+{
+  "functions": {
+    "api/index.py": {
+      "runtime": "python3.12",
+      "maxDuration": 60,
+      "includeFiles": "{agents,retrieval,tools,graph,crew,frontend,data/sample_docs}/**"
+    }
+  },
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/api/index.py" }
+  ],
+  "env": {
+    "USE_IN_MEMORY_STORE": "1",
+    "USE_LOCAL_BM25": "1",
+    "USE_HASHING_EMBEDDER": "1",
+    "USE_FALLBACK_CODING_CREW": "1",
+    "VECTOR_STORE_DIR": "/tmp/vector_store"
+  }
+}
